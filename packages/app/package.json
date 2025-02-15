@@ -40,6 +40,7 @@
     "expo-image-picker": "~15.0.7",
     "expo-linking": "~7.0.3",
     "expo-secure-store": "~13.0.2",
+    "prism-react-renderer": "^2.4.1",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.46.1",
     "react-markdown": "^9.0.3",
