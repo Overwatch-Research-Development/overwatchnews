@@ -22,6 +22,7 @@ import { useRouter as useNextRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { SolitoImage } from 'solito/image'
 import { Link, useLink } from 'solito/link'
+import { Eye } from '@tamagui/lucide-icons'
 
 import { NavTabs } from './components/nav-tabs.web'
 
@@ -30,6 +31,17 @@ export type HomeLayoutProps = {
   padded?: boolean
   fullPage?: boolean
 }
+
+const Logo = () => (
+  <Link href="/">
+    <XStack ai="center" gap="$2">
+      <Eye size={24} color="$color12" />
+      <SizableText size="$6" fontWeight="bold">
+        Overwatch
+      </SizableText>
+    </XStack>
+  </Link>
+)
 
 export const HomeLayout = ({ children, fullPage = false, padded = false }: HomeLayoutProps) => {
   return (
@@ -45,12 +57,22 @@ export const HomeLayout = ({ children, fullPage = false, padded = false }: HomeL
         bg="$color1"
       >
         <XStack jc="space-between" $sm={{ ai: 'center' }} ai="flex-end">
-          <YStack $sm={{ dsp: 'none' }}>
-            <NavTabs orientation="horizontal" size="$4" />
-          </YStack>
+          <XStack ai="center" gap="$4">
+            {/* Logo on desktop */}
+            <YStack $sm={{ dsp: 'none' }}>
+              <Logo />
+            </YStack>
+            {/* Logo + Nav on desktop */}
+            <YStack $sm={{ dsp: 'none' }}>
+              <NavTabs orientation="horizontal" size="$4" />
+            </YStack>
+          </XStack>
+
+          {/* Mobile nav with logo */}
           <YStack $gtSm={{ dsp: 'none' }}>
             <MobileNavbar>
               <YStack gap="$5" w="100%" ai="flex-end">
+                <Logo /> {/* Add logo to mobile menu */}
                 <NavTabs orientation="vertical" f={1} w="100%" size="$3" />
                 <Separator w="100%" />
                 <CtaButton w="100%" />
@@ -61,6 +83,7 @@ export const HomeLayout = ({ children, fullPage = false, padded = false }: HomeL
               </YStack>
             </MobileNavbar>
           </YStack>
+
           <XStack ai="center" gap="$4" py="$3">
             <CtaButton />
             <ProfileButton />

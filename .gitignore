@@ -43,3 +43,5 @@ thumbs.db
 
 # Turborepo
 .turbo
+
+.ngrok

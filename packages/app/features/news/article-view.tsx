@@ -1,7 +1,7 @@
 import { api } from 'app/utils/api'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
 import { useEffect, useState } from 'react'
-import { Button, Card, Form, H1, Image, Input, Paragraph, Spinner, XStack, YStack } from '@my/ui'
+import { Button, Card, Form, H1, H2, Image, Input, Paragraph, Spinner, XStack, YStack } from '@my/ui'
 import { useUser } from 'app/utils/useUser'
 
 export function ArticleView({ id }: { id: string }) {
