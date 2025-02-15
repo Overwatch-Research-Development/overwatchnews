@@ -15,6 +15,7 @@
     "watch:packages": "ultra -r --no-pretty --concurrency 400 watch",
     "web": "yarn workspace next-app dev",
     "web:tunnel": "concurrently \"yarn web\" \"npx ngrok http --url=feline-daring-generally.ngrok-free.app 3000\"",
+    "web:prod:tunnel": "concurrently \"yarn web:prod:serve\" \"npx ngrok http --url=feline-daring-generally.ngrok-free.app 8151\"",
     "web:extract": "DISABLE_EXTRACTION=false yarn workspace next-app dev",
     "web:prod": "yarn workspace next-app build",
     "web:prod:analyze": "ANALYZE=true yarn web:prod",
@@ -87,5 +88,8 @@
     "turbo": "1.10.14",
     "typescript": "^5.3.3",
     "ultra-runner": "^3.10.5"
+  },
+  "dependencies": {
+    "rehype-raw": "^7.0.0"
   }
 }
