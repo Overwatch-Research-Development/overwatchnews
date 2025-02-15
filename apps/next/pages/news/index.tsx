@@ -1,7 +1,10 @@
 import { ArticleList } from 'app/features/news/article-list'
+import { HomeLayout } from 'app/features/home/layout.web'
 import Head from 'next/head'
 
-export default function NewsPage() {
+import type { NextPageWithLayout } from '../_app'
+
+const Page: NextPageWithLayout = () => {
   return (
     <>
       <Head>
@@ -11,3 +14,7 @@ export default function NewsPage() {
     </>
   )
 }
+
+Page.getLayout = (page) => <HomeLayout fullPage>{page}</HomeLayout>
+
+export default Page
