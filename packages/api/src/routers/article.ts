@@ -8,11 +8,13 @@ export const articleRouter = createTRPCRouter({
   getPublished: publicProcedure.query(async ({ ctx: { supabase } }) => {
     const { data, error } = await supabase
       .from('articles')
-      .select(`
+      .select(
+        `
         *,
         author:profiles(name, avatar_url),
         comments(count)
-      `)
+      `
+      )
       .eq('status', 'published')
       .order('published_at', { ascending: false })
 
@@ -26,14 +28,16 @@ export const articleRouter = createTRPCRouter({
     .query(async ({ ctx: { supabase }, input }) => {
       const { data, error } = await supabase
         .from('articles')
-        .select(`
+        .select(
+          `
           *,
           author:profiles(name, avatar_url),
           comments(
             *,
             author:profiles(name, avatar_url)
           )
-        `)
+        `
+        )
         .eq('id', input.id)
         .single()
 
@@ -61,7 +65,10 @@ export const articleRouter = createTRPCRouter({
         .single()
 
       if (profile?.role !== 'administrator') {
-        throw new TRPCError({ code: 'FORBIDDEN', message: 'Only administrators can create articles' })
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Only administrators can create articles',
+        })
       }
 
       const slug = input.title
@@ -96,11 +103,25 @@ export const articleRouter = createTRPCRouter({
           ...input,
           author_id: user.id,
         })
-        .select(`
+        .select(
+          `
           *,
           author:profiles(name, avatar_url)
-        `)
+        `
+        )
         .single()
+
+      if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
+      return data
+    }),
+
+  // Add this to the articleRouter in packages/api/src/routers/article.ts
+  incrementViews: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx: { supabase }, input }) => {
+      const { data, error } = await supabase.rpc('increment_article_views', {
+        article_id: input.id,
+      })
 
       if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
       return data

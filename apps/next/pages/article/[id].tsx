@@ -4,9 +4,16 @@ import { useRouter } from 'next/router'
 
 export default function ArticlePage() {
   const router = useRouter()
-  const { id } = router.query
+  
+  // Wait for router to be ready before rendering ArticleView
+  if (!router.isReady) {
+    return null
+  }
 
-  if (typeof id !== 'string') return null
+  const { id } = router.query
+  if (typeof id !== 'string') {
+    return null
+  }
 
   return (
     <>
