@@ -45,51 +45,60 @@ export type Database = {
       articles: {
         Row: {
           author_id: string
+          categories: string[] | null
+          collaborators: string[] | null
           content: string
           created_at: string | null
           excerpt: string | null
           featured_image_url: string | null
           id: string
           is_featured: boolean | null
+          meta: Json | null
           published_at: string | null
+          related_articles: string[] | null
           slug: string
-          status: string | null
+          status: Database["public"]["Enums"]["article_status"] | null
           title: string
           updated_at: string | null
           view_count: number | null
-          views: number | null
         }
         Insert: {
           author_id: string
+          categories?: string[] | null
+          collaborators?: string[] | null
           content: string
           created_at?: string | null
           excerpt?: string | null
           featured_image_url?: string | null
           id?: string
           is_featured?: boolean | null
+          meta?: Json | null
           published_at?: string | null
+          related_articles?: string[] | null
           slug: string
-          status?: string | null
+          status?: Database["public"]["Enums"]["article_status"] | null
           title: string
           updated_at?: string | null
           view_count?: number | null
-          views?: number | null
         }
         Update: {
           author_id?: string
+          categories?: string[] | null
+          collaborators?: string[] | null
           content?: string
           created_at?: string | null
           excerpt?: string | null
           featured_image_url?: string | null
           id?: string
           is_featured?: boolean | null
+          meta?: Json | null
           published_at?: string | null
+          related_articles?: string[] | null
           slug?: string
-          status?: string | null
+          status?: Database["public"]["Enums"]["article_status"] | null
           title?: string
           updated_at?: string | null
           view_count?: number | null
-          views?: number | null
         }
         Relationships: [
           {
@@ -100,27 +109,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      categories: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-          updated_at?: string
-        }
-        Relationships: []
       }
       comments: {
         Row: {
@@ -264,15 +252,7 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "posts_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "categories"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -407,6 +387,7 @@ export type Database = {
       }
     }
     Enums: {
+      article_status: "draft" | "published" | "archived"
       user_role: "user" | "supporter" | "administrator"
     }
     CompositeTypes: {

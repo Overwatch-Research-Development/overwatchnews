@@ -44,6 +44,8 @@ const Logo = () => (
 )
 
 export const HomeLayout = ({ children, fullPage = false, padded = false }: HomeLayoutProps) => {
+  const { profile } = useUser()
+
   return (
     <YStack f={1}>
       <YStack
@@ -75,7 +77,7 @@ export const HomeLayout = ({ children, fullPage = false, padded = false }: HomeL
                 <Logo /> {/* Add logo to mobile menu */}
                 <NavTabs orientation="vertical" f={1} w="100%" size="$3" />
                 <Separator w="100%" />
-                <CtaButton w="100%" />
+                {profile?.role === 'administrator' && <CtaButton w="100%" />}
                 <Separator w="100%" />
                 <WithUserDetail ai="center" gap="$4">
                   <ProfileButton />
@@ -85,7 +87,7 @@ export const HomeLayout = ({ children, fullPage = false, padded = false }: HomeL
           </YStack>
 
           <XStack ai="center" gap="$4" py="$3">
-            <CtaButton />
+            {profile?.role === 'administrator' && <CtaButton />}
             <ProfileButton />
           </XStack>
         </XStack>
