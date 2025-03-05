@@ -53,8 +53,7 @@ export const articleRouter = createTRPCRouter({
         content: z.string().min(1),
         excerpt: z.string().optional(),
         featured_image_url: z.string().url().optional(),
-        categories: z.array(z.string()).optional(),
-        collaborators: z.array(z.string()).optional(),
+        category_id: z.string().uuid().optional(), // Add this line
         status: z.enum(['draft', 'published']),
       })
     )
@@ -152,5 +151,51 @@ export const articleRouter = createTRPCRouter({
 
       if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
       return data
+    }),
+  getRelated: publicProcedure
+    .input(z.object({ id: z.string(), limit: z.number().min(1).max(10).default(5) }))
+    .query(async ({ ctx: { supabase }, input }) => {
+      // First, get the categories of the current article
+      const { data: currentArticle, error: currentArticleError } = await supabase
+        .from('articles')
+        .select('category_id')
+        .eq('id', input.id)
+        .single()
+
+      if (currentArticleError) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Article not found' })
+      }
+
+      if (!currentArticle.category_id) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Article category not found' })
+      }
+      // Then, get related articles based on the same category
+      const { data: relatedArticles, error: relatedArticlesError } = await supabase
+        .from('articles')
+        .select(
+          `
+          id,
+          title,
+          excerpt,
+          featured_image_url,
+          published_at,
+          created_at,
+          author:profiles(name, avatar_url)
+        `
+        )
+        .eq('status', 'published')
+        .eq('category_id', currentArticle.category_id)
+        .neq('id', input.id)
+        .order('published_at', { ascending: false })
+        .limit(input.limit)
+
+      if (relatedArticlesError) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: relatedArticlesError.message,
+        })
+      }
+
+      return relatedArticles
     }),
 })
