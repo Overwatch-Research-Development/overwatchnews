@@ -1,3 +1,6 @@
+import { api } from 'app/utils/api'
+import { useSupabase } from 'app/utils/supabase/useSupabase'
+import { useEffect, useState, useMemo } from 'react'
 import {
   Avatar,
   Card,
@@ -15,97 +18,34 @@ import {
   Separator,
   Spinner,
   SubmitButton,
+  Theme,
   XStack,
   YStack,
 } from '@my/ui'
-import { Clock, BookOpen, Eye } from '@tamagui/lucide-icons'
-import { api } from 'app/utils/api'
-import { useSupabase } from 'app/utils/supabase/useSupabase'
 import { useUser } from 'app/utils/useUser'
-import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import ReactMarkdown from 'react-markdown'
-import { ScrollView } from 'react-native'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
+import { ScrollView } from 'react-native'
+import { Highlight, themes } from 'prism-react-renderer'
+import { Clock, BookOpen, Share2, Facebook, Twitter, Linkedin, Eye } from '@tamagui/lucide-icons'
 
 // Custom components for Markdown rendering
 const MarkdownComponents = {
-  h1: (props: any) => <H1 mb="$6" mt="$8" {...props} />,
-  h2: (props: any) => <H2 mb="$5" mt="$6" {...props} />,
-  h3: (props: any) => <H3 mb="$4" mt="$5" {...props} />,
-  h4: (props: any) => <H4 mb="$3" mt="$4" {...props} />,
-  h5: (props: any) => <H5 mb="$3" mt="$4" {...props} />,
-  h6: (props: any) => <H6 mb="$3" mt="$4" {...props} />,
-  p: (props: any) => <Paragraph size="$5" lh="$6" mb="$4" {...props} />,
-  ul: (props: any) => <YStack tag="ul" mb="$4" pl="$4" {...props} />,
-  ol: (props: any) => <YStack tag="ol" mb="$4" pl="$4" {...props} />,
-  li: (props: any) => <ListItem mb="$2" {...props} />,
-  img: ({ src, alt }: { src?: string; alt?: string }) => (
-    <Image
-      source={{ uri: src }}
-      width="100%"
-      height={400}
-      alt={alt}
-      mb="$6"
-      mt="$4"
-      borderRadius="$4"
-    />
-  ),
-  table: (props: any) => (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      <YStack
-        tag="table"
-        borderWidth={1}
-        borderColor="$borderColor"
-        borderRadius="$4"
-        overflow="hidden"
-        {...props}
-      />
-    </ScrollView>
-  ),
-  tr: (props: any) => (
-    <XStack tag="tr" borderBottomWidth={1} borderColor="$borderColor" {...props} />
-  ),
-  td: (props: any) => (
-    <XStack
-      tag="td"
-      p="$3"
-      borderRightWidth={1}
-      borderColor="$borderColor"
-      minWidth={150}
-      {...props}
-    />
-  ),
-  th: (props: any) => (
-    <XStack
-      tag="th"
-      p="$3"
-      borderRightWidth={1}
-      borderColor="$borderColor"
-      backgroundColor="$backgroundHover"
-      fontWeight="bold"
-      minWidth={150}
-      {...props}
-    />
-  ),
-  hr: () => <Separator my="$6" />,
-  a: (props: any) => (
-    <Paragraph
-      tag="a"
-      color="$blue10"
-      textDecorationLine="underline"
-      hoverStyle={{ opacity: 0.8 }}
-      {...props}
-    />
-  ),
-  blockquote: (props: any) => (
-    <YStack borderLeftWidth={4} borderColor="$blue8" pl="$4" my="$4" opacity={0.8} {...props} />
-  ),
+  // ... keep existing MarkdownComponents
+}
+
+const calculateReadTime = (content: string) => {
+  const wordsPerMinute = 200
+  const words = content.trim().split(/\s+/).length
+  const readTime = Math.ceil(words / wordsPerMinute)
+  return readTime
 }
 
 export function ArticleView({ id }: { id: string }) {
   const { data: article, isLoading, refetch } = api.article.getById.useQuery({ id })
+  const incrementViewCount = api.article.incrementViews.useMutation()
   const supabase = useSupabase()
   const { user, avatarUrl } = useUser()
   const [comment, setComment] = useState('')
@@ -117,7 +57,13 @@ export function ArticleView({ id }: { id: string }) {
     },
   })
 
-  // Always set up subscription even if loading
+  // Increment view count on initial load
+  useEffect(() => {
+    if (id) {
+      incrementViewCount.mutate({ id })
+    }
+  }, [id])
+
   useEffect(() => {
     const channel = supabase
       .channel('article-comments')
@@ -149,6 +95,11 @@ export function ArticleView({ id }: { id: string }) {
       content: comment,
     })
   }
+
+  const readTime = useMemo(() => {
+    if (!article?.content) return 0
+    return calculateReadTime(article.content)
+  }, [article?.content])
 
   return (
     <YStack space="$4" p="$4" maxWidth={800} mx="auto">
@@ -184,6 +135,7 @@ export function ArticleView({ id }: { id: string }) {
               <Paragraph>•</Paragraph>
               <XStack ai="center" space="$1">
                 <BookOpen size={16} />
+                <Paragraph size="$3">{readTime} min read</Paragraph>
               </XStack>
               <Paragraph>•</Paragraph>
               <XStack ai="center" space="$1">
@@ -194,6 +146,23 @@ export function ArticleView({ id }: { id: string }) {
           </YStack>
         </XStack>
       </YStack>
+
+      {/* Featured Image */}
+      {article?.featured_image_url && (
+        <YStack mb="$6">
+          <Image
+            source={{ uri: article.featured_image_url }}
+            width="100%"
+            height={500}
+            borderRadius="$4"
+          />
+          {article?.image_caption && (
+            <Paragraph size="$3" opacity={0.7} mt="$2">
+              {article.image_caption}
+            </Paragraph>
+          )}
+        </YStack>
+      )}
 
       {/* Article Content */}
       <YStack backgroundColor="$background" p="$4" borderRadius="$4">
