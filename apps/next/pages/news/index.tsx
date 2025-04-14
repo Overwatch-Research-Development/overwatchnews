@@ -1,10 +1,10 @@
-import { HomeLayout } from 'app/features/home/layout.web'
 import { ArticleList } from 'app/features/news/article-list'
+import { HomeLayout } from 'app/features/home/layout.web'
 import Head from 'next/head'
 
 import type { NextPageWithLayout } from '../_app'
 
-const NewsPage: NextPageWithLayout = () => {
+const Page: NextPageWithLayout = () => {
   return (
     <>
       <Head>
@@ -15,6 +15,6 @@ const NewsPage: NextPageWithLayout = () => {
   )
 }
 
-NewsPage.getLayout = (page) => <HomeLayout fullPage>{page}</HomeLayout>
+Page.getLayout = (page) => <HomeLayout fullPage>{page}</HomeLayout>
 
-export default NewsPage
+export default Page

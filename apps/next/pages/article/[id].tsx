@@ -1,11 +1,10 @@
-import { HomeLayout } from 'app/features/home/layout.web'
 import { ArticleView } from 'app/features/news/article-view'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 
-import type { NextPageWithLayout } from '../_app'
-const ArticlePage: NextPageWithLayout = () => {
+export default function ArticlePage() {
   const router = useRouter()
+  
   // Wait for router to be ready before rendering ArticleView
   if (!router.isReady) {
     return null
@@ -25,7 +24,3 @@ const ArticlePage: NextPageWithLayout = () => {
     </>
   )
 }
-
-ArticlePage.getLayout = (page) => <HomeLayout fullPage>{page}</HomeLayout>
-
-export default ArticlePage
