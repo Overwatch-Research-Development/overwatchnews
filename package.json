@@ -90,7 +90,6 @@
     "ultra-runner": "^3.10.5"
   },
   "dependencies": {
-    "prism-react-renderer": "^2.4.1",
     "rehype-raw": "^7.0.0"
   }
 }
