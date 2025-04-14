@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "_with-env": "dotenv -e .env -c -- ",
+    "clean": "rm -rf node_modules/.cache apps/next/.next",
     "ios": "cd apps/expo && yarn ios",
     "android": "cd apps/expo && yarn android",
     "native": "cd apps/expo && yarn start",
@@ -53,6 +54,8 @@
     "react-refresh": "^0.14.0",
     "react-native-svg": "15.10.1",
     "react-native-web": "~0.19.10",
+    "@types/react": "^18.0.27",
+    "@types/react-dom": "^18.0.10",
     "@babel/core": "^7.24",
     "babel-loader": "^8.3.0"
   },
@@ -66,8 +69,8 @@
     "@svgr/plugin-jsx": "^8.1.0",
     "@svgr/plugin-prettier": "^8.1.0",
     "@svgr/plugin-svgo": "^8.1.0",
-    "@tamagui/cli": "^1.124.1",
-    "@tamagui/config": "^1.124.1",
+    "@tamagui/cli": "^1.125.35",
+    "@tamagui/config": "^1.125.35",
     "@turbo/gen": "1.10.14",
     "@types/fs-extra": "^11",
     "axios": "^1.7.2",

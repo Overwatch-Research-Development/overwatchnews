@@ -74,6 +74,8 @@ module.exports = () => {
 
     transpilePackages: [
       'solito',
+      'react-native',
+      '@my/ui',
       'react-native-web',
       'expo-linking',
       'expo-constants',
