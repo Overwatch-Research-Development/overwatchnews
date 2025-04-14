@@ -40,60 +40,12 @@ export type Database = {
           type?: string
           updated_at?: string
         }
-        Relationships: []
-      }
-      articles: {
-        Row: {
-          author_id: string
-          content: string
-          created_at: string | null
-          excerpt: string | null
-          featured_image_url: string | null
-          id: string
-          is_featured: boolean | null
-          published_at: string | null
-          slug: string
-          status: string | null
-          title: string
-          updated_at: string | null
-          view_count: number | null
-        }
-        Insert: {
-          author_id: string
-          content: string
-          created_at?: string | null
-          excerpt?: string | null
-          featured_image_url?: string | null
-          id?: string
-          is_featured?: boolean | null
-          published_at?: string | null
-          slug: string
-          status?: string | null
-          title: string
-          updated_at?: string | null
-          view_count?: number | null
-        }
-        Update: {
-          author_id?: string
-          content?: string
-          created_at?: string | null
-          excerpt?: string | null
-          featured_image_url?: string | null
-          id?: string
-          is_featured?: boolean | null
-          published_at?: string | null
-          slug?: string
-          status?: string | null
-          title?: string
-          updated_at?: string | null
-          view_count?: number | null
-        }
         Relationships: [
           {
-            foreignKeyName: "articles_author_id_fkey"
-            columns: ["author_id"]
+            foreignKeyName: "achievements_profile_id_fkey"
+            columns: ["profile_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -118,58 +70,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
-      }
-      comments: {
-        Row: {
-          article_id: string | null
-          author_id: string
-          content: string
-          created_at: string | null
-          id: string
-          parent_id: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          article_id?: string | null
-          author_id: string
-          content: string
-          created_at?: string | null
-          id?: string
-          parent_id?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          article_id?: string | null
-          author_id?: string
-          content?: string
-          created_at?: string | null
-          id?: string
-          parent_id?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "comments_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "articles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comments_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comments_parent_id_fkey"
-            columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "comments"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       events: {
         Row: {
@@ -228,7 +128,15 @@ export type Database = {
           expo_tokens?: string[] | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "installs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       posts: {
         Row: {
@@ -269,6 +177,13 @@ export type Database = {
             referencedRelation: "categories"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "posts_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       profiles: {
@@ -277,23 +192,28 @@ export type Database = {
           avatar_url: string | null
           id: string
           name: string | null
-          role: Database["public"]["Enums"]["user_role"] | null
         }
         Insert: {
           about?: string | null
           avatar_url?: string | null
           id: string
           name?: string | null
-          role?: Database["public"]["Enums"]["user_role"] | null
         }
         Update: {
           about?: string | null
           avatar_url?: string | null
           id?: string
           name?: string | null
-          role?: Database["public"]["Enums"]["user_role"] | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       projects: {
         Row: {
@@ -335,7 +255,15 @@ export type Database = {
           updated_at?: string
           us_zip_code?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "projects_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       referrals: {
         Row: {
@@ -359,7 +287,22 @@ export type Database = {
           referrer_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "referrals_referred_id_fkey"
+            columns: ["referred_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referrals_referrer_id_fkey"
+            columns: ["referrer_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_stats: {
         Row: {
@@ -389,7 +332,15 @@ export type Database = {
           updated_at?: string
           weekly_post_views?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_stats_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -399,7 +350,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      user_role: "user" | "supporter" | "administrator"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -487,19 +438,4 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
-    : never
-
-export type CompositeTypes<
-  PublicCompositeTypeNameOrOptions extends
-    | keyof PublicSchema["CompositeTypes"]
-    | { schema: keyof Database },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database
-  }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
-    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
