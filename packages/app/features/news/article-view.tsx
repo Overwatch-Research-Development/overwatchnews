@@ -29,11 +29,141 @@ import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import { ScrollView } from 'react-native'
 import { Highlight, themes } from 'prism-react-renderer'
-import { Clock, BookOpen, Share2, Facebook, Twitter, Linkedin, Eye } from '@tamagui/lucide-icons'
+import { Clock, BookOpen, Share2, Facebook, Twitter, Linkedin } from '@tamagui/lucide-icons'
 
 // Custom components for Markdown rendering
 const MarkdownComponents = {
-  // ... keep existing MarkdownComponents
+  h1: (props: any) => <H1 mb="$6" mt="$8" {...props} />,
+  h2: (props: any) => <H2 mb="$5" mt="$6" {...props} />,
+  h3: (props: any) => <H3 mb="$4" mt="$5" {...props} />,
+  h4: (props: any) => <H4 mb="$3" mt="$4" {...props} />,
+  h5: (props: any) => <H5 mb="$3" mt="$4" {...props} />,
+  h6: (props: any) => <H6 mb="$3" mt="$4" {...props} />,
+  p: (props: any) => <Paragraph size="$5" lh="$6" mb="$4" {...props} />,
+  ul: (props: any) => <YStack tag="ul" mb="$4" pl="$4" {...props} />,
+  ol: (props: any) => <YStack tag="ol" mb="$4" pl="$4" {...props} />,
+  li: (props: any) => <ListItem mb="$2" {...props} />,
+  img: ({ src, alt }: { src?: string; alt?: string }) => (
+    <Image
+      source={{ uri: src }}
+      width="100%"
+      height={400}
+      alt={alt}
+      mb="$6"
+      mt="$4"
+      borderRadius="$4"
+    />
+  ),
+  code: ({
+    inline,
+    className,
+    children,
+    ...props
+  }: {
+    inline?: boolean
+    className?: string
+    children: any
+  }) => {
+    const match = /language-(\w+)/.exec(className || '')
+    const language = match ? match[1] : ''
+
+    return !inline ? (
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} mb="$6" mt="$2">
+        <YStack width="100%" minWidth={300}>
+          <Highlight
+            theme={themes.vsDark}
+            code={String(children).replace(/\n$/, '')}
+            language={language || 'typescript'}
+          >
+            {({ tokens, getLineProps, getTokenProps }) => (
+              <YStack tag="pre" backgroundColor="$color1" borderRadius="$4" p="$4" space="$1">
+                {tokens.map((line, i) => (
+                  <XStack key={i} {...getLineProps({ line })} space="$2">
+                    <Paragraph color="$color9" size="$3" w={25} ta="right" opacity={0.5}>
+                      {i + 1}
+                    </Paragraph>
+                    <XStack>
+                      {line.map((token, key) => (
+                        <Paragraph
+                          key={key}
+                          fontFamily="$mono"
+                          size="$4"
+                          {...getTokenProps({ token })}
+                        />
+                      ))}
+                    </XStack>
+                  </XStack>
+                ))}
+              </YStack>
+            )}
+          </Highlight>
+        </YStack>
+      </ScrollView>
+    ) : (
+      <Paragraph
+        tag="code"
+        fontFamily="$mono"
+        backgroundColor="$backgroundHover"
+        px="$2"
+        mx="$1"
+        borderRadius="$2"
+        size="$4"
+        {...props}
+      >
+        {children}
+      </Paragraph>
+    )
+  },
+  table: (props: any) => (
+    <ScrollView horizontal mb="$6" showsHorizontalScrollIndicator={false}>
+      <YStack
+        tag="table"
+        borderWidth={1}
+        borderColor="$borderColor"
+        borderRadius="$4"
+        overflow="hidden"
+        {...props}
+      />
+    </ScrollView>
+  ),
+  tr: (props: any) => (
+    <XStack tag="tr" borderBottomWidth={1} borderColor="$borderColor" {...props} />
+  ),
+  td: (props: any) => (
+    <XStack
+      tag="td"
+      p="$3"
+      borderRightWidth={1}
+      borderColor="$borderColor"
+      minWidth={150}
+      {...props}
+    />
+  ),
+  th: (props: any) => (
+    <XStack
+      tag="th"
+      p="$3"
+      borderRightWidth={1}
+      borderColor="$borderColor"
+      backgroundColor="$backgroundHover"
+      fontWeight="bold"
+      minWidth={150}
+      {...props}
+    />
+  ),
+  hr: () => <Separator my="$6" />,
+  a: (props: any) => (
+    <Paragraph
+      tag="a"
+      color="$blue10"
+      textDecorationLine="underline"
+      hoverStyle={{ opacity: 0.8 }}
+      {...props}
+    />
+  ),
+  blockquote: (props: any) => (
+    <YStack borderLeftWidth={4} borderColor="$blue8" pl="$4" my="$4" opacity={0.8} {...props} />
+  ),
 }
 
 const calculateReadTime = (content: string) => {
@@ -45,9 +175,8 @@ const calculateReadTime = (content: string) => {
 
 export function ArticleView({ id }: { id: string }) {
   const { data: article, isLoading, refetch } = api.article.getById.useQuery({ id })
-  const incrementViewCount = api.article.incrementViews.useMutation()
   const supabase = useSupabase()
-  const { user, avatarUrl } = useUser()
+  const { user } = useUser()
   const [comment, setComment] = useState('')
   const form = useForm()
   const addComment = api.article.comment.useMutation({
@@ -56,13 +185,6 @@ export function ArticleView({ id }: { id: string }) {
       refetch()
     },
   })
-
-  // Increment view count on initial load
-  useEffect(() => {
-    if (id) {
-      incrementViewCount.mutate({ id })
-    }
-  }, [id])
 
   useEffect(() => {
     const channel = supabase
@@ -137,13 +259,32 @@ export function ArticleView({ id }: { id: string }) {
                 <BookOpen size={16} />
                 <Paragraph size="$3">{readTime} min read</Paragraph>
               </XStack>
-              <Paragraph>•</Paragraph>
-              <XStack ai="center" space="$1">
-                <Eye size={16} />
-                <Paragraph size="$3">{article.view_count || 0} views</Paragraph>
-              </XStack>
             </XStack>
           </YStack>
+        </XStack>
+
+        {/* Social Share Buttons */}
+        <XStack space="$2">
+          <Theme name="blue">
+            <Card elevate bordered padded pressStyle={{ scale: 0.95 }}>
+              <Facebook size={20} />
+            </Card>
+          </Theme>
+          <Theme name="blue">
+            <Card elevate bordered padded pressStyle={{ scale: 0.95 }}>
+              <Twitter size={20} />
+            </Card>
+          </Theme>
+          <Theme name="blue">
+            <Card elevate bordered padded pressStyle={{ scale: 0.95 }}>
+              <Linkedin size={20} />
+            </Card>
+          </Theme>
+          <Theme name="gray">
+            <Card elevate bordered padded pressStyle={{ scale: 0.95 }}>
+              <Share2 size={20} />
+            </Card>
+          </Theme>
         </XStack>
       </YStack>
 
@@ -182,31 +323,15 @@ export function ArticleView({ id }: { id: string }) {
           {user && (
             <FormProvider {...form}>
               <Form onSubmit={form.handleSubmit(handleSubmit)}>
-                <YStack space="$2">
-                  <XStack space="$2" ai="center">
-                    <Avatar circular size="$3">
-                      {avatarUrl ? (
-                        <Avatar.Image source={{ uri: avatarUrl }} width={32} height={32} />
-                      ) : (
-                        <Avatar.Fallback>
-                          {user.email?.charAt(0).toUpperCase() || 'U'}
-                        </Avatar.Fallback>
-                      )}
-                    </Avatar>
-                    <Paragraph size="$4" fontWeight="600">
-                      {user.email}
-                    </Paragraph>
-                  </XStack>
-                  <XStack space="$2">
-                    <Input
-                      flex={1}
-                      value={comment}
-                      onChangeText={setComment}
-                      placeholder="Write a comment..."
-                    />
-                    <SubmitButton onPress={form.handleSubmit(handleSubmit)}>Comment</SubmitButton>
-                  </XStack>
-                </YStack>
+                <XStack space="$2">
+                  <Input
+                    flex={1}
+                    value={comment}
+                    onChangeText={setComment}
+                    placeholder="Write a comment..."
+                  />
+                  <SubmitButton onPress={form.handleSubmit(handleSubmit)}>Comment</SubmitButton>
+                </XStack>
               </Form>
             </FormProvider>
           )}
