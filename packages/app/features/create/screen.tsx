@@ -5,16 +5,18 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'solito/router'
 import type { TabsContentProps } from 'tamagui'
 import { Separator, Tabs, Text, useEvent } from 'tamagui'
-import { ArticleEditor } from './CreateArticleForm'
-import { useUser } from 'app/utils/useUser'
+
+import { CreateEventForm } from './CreateEventForm'
+import { CreatePostForm } from './CreatePostForm'
+import { CreateProjectForm } from './CreateProjectForm'
+
+const tabs = ['Create Project', 'New Post', 'Add Event']
 
 export const CreateScreen = () => {
   const { setToggleCreateModal } = useGlobalStore()
   const pathName = usePathname()
   const toast = useToastController()
   const router = useRouter()
-  const { profile } = useUser()
-  const tabs = ['Article', 'Blog']
 
   const [activeTabIndex, _setActiveTabIndex] = useState(0)
   const activeTabRef = useRef(activeTabIndex)
@@ -42,8 +44,12 @@ export const CreateScreen = () => {
 
   const renderTab = () => {
     switch (currentTab) {
-      case 'Article':
-        return <ArticleEditor onSuccess={onSuccess} />
+      case 'Create Project':
+        return <CreateProjectForm onSuccess={onSuccess} />
+      case 'New Post':
+        return <CreatePostForm onSuccess={onSuccess} />
+      case 'Add Event':
+        return <CreateEventForm onSuccess={onSuccess} />
     }
   }
 

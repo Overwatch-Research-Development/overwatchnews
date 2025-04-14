@@ -53,9 +53,7 @@ export const articleRouter = createTRPCRouter({
         content: z.string().min(1),
         excerpt: z.string().optional(),
         featured_image_url: z.string().url().optional(),
-        categories: z.array(z.string()).optional(),
-        collaborators: z.array(z.string()).optional(),
-        status: z.enum(['draft', 'published']),
+        status: z.enum(['draft', 'published', 'archived']),
       })
     )
     .mutation(async ({ ctx: { supabase, user }, input }) => {
@@ -73,44 +71,19 @@ export const articleRouter = createTRPCRouter({
         })
       }
 
-      // Generate a URL-friendly slug from the title
       const slug = input.title
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '')
+        .replace(/^-+|-+$/g, '')
 
-      const { data, error } = await supabase
-        .from('articles')
-        .insert({
-          ...input,
-          slug,
-          author_id: user.id,
-          view_count: 0,
-          is_featured: false,
-          published_at: input.status === 'published' ? new Date().toISOString() : null,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          meta: {
-            version: 1,
-            last_edited_by: user.id,
-          },
-        })
-        .select(
-          `
-          *,
-          author:profiles(name, avatar_url),
-          comments(count)
-        `
-        )
-        .single()
+      const { data, error } = await supabase.from('articles').insert({
+        ...input,
+        slug,
+        author_id: user.id,
+        published_at: input.status === 'published' ? new Date().toISOString() : null,
+      })
 
-      if (error) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: error.message,
-        })
-      }
-
+      if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message })
       return data
     }),
 

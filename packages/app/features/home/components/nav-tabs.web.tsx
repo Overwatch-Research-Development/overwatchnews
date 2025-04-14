@@ -98,9 +98,6 @@ export const NavTabs = (props: TabsProps) => {
         <Tab value="/settings" onInteraction={handleOnInteraction}>
           Settings
         </Tab>
-        <Tab value="/news" onInteraction={handleOnInteraction}>
-          News
-        </Tab>
       </Tabs.List>
     </Tabs>
   )
