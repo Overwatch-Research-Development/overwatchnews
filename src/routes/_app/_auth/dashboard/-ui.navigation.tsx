@@ -41,7 +41,7 @@ export function Navigation({ user }: { user: User }) {
 
   return (
     <nav className="sticky top-0 z-50 flex w-full flex-col border-b border-border bg-card px-6">
-      <div className="mx-auto flex w-full max-w-screen-xl items-center justify-between py-3">
+      <div className="mx-auto flex w-full max-w-(--breakpoint-xl) items-center justify-between py-3">
         <div className="flex h-10 items-center gap-2">
           <Link
             to={DashboardRoute.fullPath}
@@ -64,7 +64,7 @@ export function Navigation({ user }: { user: User }) {
                       src={user.avatarUrl}
                     />
                   ) : (
-                    <span className="h-8 w-8 rounded-full bg-gradient-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
+                    <span className="h-8 w-8 rounded-full bg-linear-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
                   )}
 
                   <p className="text-sm font-medium text-primary/80">
@@ -99,7 +99,7 @@ export function Navigation({ user }: { user: User }) {
                       src={user.avatarUrl}
                     />
                   ) : (
-                    <span className="h-6 w-6 rounded-full bg-gradient-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
+                    <span className="h-6 w-6 rounded-full bg-linear-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
                   )}
 
                   <p className="text-sm font-medium text-primary/80">
@@ -158,7 +158,7 @@ export function Navigation({ user }: { user: User }) {
                     src={user.avatarUrl}
                   />
                 ) : (
-                  <span className="min-h-8 min-w-8 rounded-full bg-gradient-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
+                  <span className="min-h-8 min-w-8 rounded-full bg-linear-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
                 )}
               </Button>
             </DropdownMenuTrigger>
@@ -221,7 +221,7 @@ export function Navigation({ user }: { user: User }) {
         </div>
       </div>
 
-      <div className="mx-auto flex w-full max-w-screen-xl items-center gap-3">
+      <div className="mx-auto flex w-full max-w-(--breakpoint-xl) items-center gap-3">
         <div
           className={cn(
             `flex h-12 items-center border-b-2`,

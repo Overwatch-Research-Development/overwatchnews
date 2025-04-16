@@ -37,7 +37,7 @@ export default function DashboardCheckout() {
 
   return (
     <div className="flex h-full w-full bg-secondary px-6 py-8 dark:bg-black">
-      <div className="z-10 mx-auto flex h-full w-full max-w-screen-xl gap-12">
+      <div className="z-10 mx-auto flex h-full w-full max-w-(--breakpoint-xl) gap-12">
         <div className="flex w-full flex-col rounded-lg border border-border bg-card dark:bg-black">
           <div className="flex w-full flex-col rounded-lg p-6">
             <div className="flex flex-col gap-2">
@@ -86,7 +86,7 @@ export default function DashboardCheckout() {
                 </Link>
               </div>
               <div className="base-grid absolute h-full w-full opacity-40" />
-              <div className="absolute bottom-0 h-full w-full bg-gradient-to-t from-[hsl(var(--card))] to-transparent" />
+              <div className="absolute bottom-0 h-full w-full bg-linear-to-t from-[hsl(var(--card))] to-transparent" />
             </div>
           </div>
         </div>

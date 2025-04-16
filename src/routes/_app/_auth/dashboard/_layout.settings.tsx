@@ -19,7 +19,7 @@ export default function DashboardSettingsLayout() {
   const isBillingPath = matchRoute({ to: BillingSettingsRoute.fullPath });
   return (
     <div className="flex h-full w-full px-6 py-8">
-      <div className="mx-auto flex h-full w-full max-w-screen-xl gap-12">
+      <div className="mx-auto flex h-full w-full max-w-(--breakpoint-xl) gap-12">
         <div className="hidden w-full max-w-64 flex-col gap-0.5 lg:flex">
           <Link
             to={SettingsRoute.fullPath}
