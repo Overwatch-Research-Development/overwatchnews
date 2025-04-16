@@ -2,10 +2,10 @@
  * Centralized site configuration, add whatever you need here.
  */
 export default {
-  siteTitle: "Convex SaaS",
+  siteTitle: "Overwatch",
   siteDescription:
     "A Lightweight, Production-Ready Convex Stack for your next SaaS Application.",
-  siteUrl: "https://convex.dev",
+  siteUrl: "https://nukeasia.xyz",
   siteImage: "/images/og-image.png",
   favicon: "/favicon.ico",
   twitterHandle: "",
